@@ -35,7 +35,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   // query user ke db
-  const userData = await User.findOne({
+  const user = await User.findOne({
     where: {
       username: req.body.username,
     },
@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
   })
 
   // kalau usernya ga exist, kasih response user not found
-  if (!userData){
+  if (!user){
     return res.status(404).send({
       message: 'User not found'
     })
@@ -51,25 +51,25 @@ exports.login = async (req, res) => {
   
   // kalau passwordnya salah
   // if( hashSync(req.body.password) !== userData.password ){
-  if( !compareSync(req.body.password, userData.password) ){
+  if( !compareSync(req.body.password, user.password) ){
     return res.status(401).send({
       message: 'Incorrect Password'
     })
   }
+
   let serverData = null
-  console.log(userData)
-  if(userData.ServerId !== null){
-    serverData = userData.Server
+  if (user.ServerId !== null) {
+    serverData = user.Server
   }
-
+  
   const payload = {
-    id: userData.id,
-    username: userData.username,
-    role: userData.role,
-    serverData: serverData,
+    id: user.id,
+    username: user.username,
+    role: user.role,
+    serverData: serverData
   }
 
-  const token = jwt.sign(payload, "supersecretkey", { expiresIn: '1d' });
+  const token = jwt.sign(payload, "secretkey", { expiresIn: '1d' });
 
   res.send({
     message: 'Login Success',
@@ -78,16 +78,20 @@ exports.login = async (req, res) => {
   })
 }
 
-exports.createServer = async (req,res) => {
+exports.creatServer = async (req, res) => {
   try {
     const data = await Server.create({
       name: req.body.name
     })
 
-    res.status(201).send(data)
+    res.status(201).send({
+      message: 'Server created succesfully',
+      user: data
+    })
+
   } catch (error) {
     res.status(422).send({
-      message: 'Failed to create server'
+      message: 'Failed to Create Server'
     })
   }
 }
@@ -95,6 +99,7 @@ exports.createServer = async (req,res) => {
 exports.getServer = async (req, res) => {
   const data = await Server.findAll()
   res.send(data)
+  include: User
 }
 
 exports.chooseServer = async (req, res) => {
@@ -103,6 +108,16 @@ exports.chooseServer = async (req, res) => {
     return res.status(403).send('User has already picked his server')
   }
   user.ServerId = req.body.ServerId
+  user.choose1 = req.body.chooose1
+  user.choose2 = req.body.chooose2
+  user.choose3 = req.body.chooose3
   user.save()
   res.status(202).send('User has picked his server')
+}
+
+exports.roombyId =  async (req, res) => {
+  const data = await Server.findByPk(req.params.id, {
+      include: User
+  }) 
+  res.send(data)
 }

@@ -1,11 +1,18 @@
+// const fetch = require('node-fetch')
+
 exports.login = (req, res) => {
-  res.render('login')
+    res.render('login')
 }
 
-exports.gmDashboard = async (req, res) => {
-  res.render('gmDashboard')
+exports.admin = async (req, res) => {
+    res.render('admin')
 }
 
-exports.playerDashboard = (req, res) => {
-  res.render('playerDashboard')
+exports.player = (req, res) => {
+    res.render('player')
 }
+
+exports.fight = (req, res) => {
+    res.render('fight')
+}
+
