@@ -18,6 +18,15 @@ module.exports = {
       role: {
         type: Sequelize.STRING
       },
+      choose1: {
+        type: Sequelize.STRING
+      },
+      choose2: {
+        type: Sequelize.STRING
+      },
+      choose3: {
+        type: Sequelize.STRING
+      },
       ServerId: {
         type: Sequelize.INTEGER
       },

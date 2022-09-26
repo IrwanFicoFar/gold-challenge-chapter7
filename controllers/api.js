@@ -1,7 +1,9 @@
 const { hashSync, compareSync } = require("bcrypt")
 const jwt  = require('jsonwebtoken')
-const { User, Server } = require("../models")
+const { User, Server , userHistory } = require("../models")
+const user = require("../models/user")
 
+// example testing awal
 exports.protected = (req, res) => {
   console.log(req.user)
 
@@ -10,6 +12,7 @@ exports.protected = (req, res) => {
   })
 }
 
+// register user
 exports.register = async (req, res) => {
   try {
     const data = await User.create({
@@ -33,6 +36,7 @@ exports.register = async (req, res) => {
   }
 }
 
+// login user
 exports.login = async (req, res) => {
   // query user ke db
   const user = await User.findOne({
@@ -78,6 +82,13 @@ exports.login = async (req, res) => {
   })
 }
 
+// lihat user yang ada
+exports.getUser = async (req, res) => {
+  const data = await User.findAll()
+  res.send(data)
+}
+
+// membuat room server untuk role admin
 exports.creatServer = async (req, res) => {
   try {
     const data = await Server.create({
@@ -96,28 +107,40 @@ exports.creatServer = async (req, res) => {
   }
 }
 
+// melihat room server
 exports.getServer = async (req, res) => {
   const data = await Server.findAll()
   res.send(data)
-  include: User
 }
 
+// choose room server, sekaligus memilih gunting batu kertas
+// saya belum berhasil membuat coding limitasi jumlah player yang bisa masuk di room server
 exports.chooseServer = async (req, res) => {
   const user = await User.findByPk(req.user.id)
-  if(user.ServerId !== null){
+  // const server = await Server.findByPk(req.server.id) // < - saya comment aja soalnya error
+  if(user.ServerId !== null && user.id.length > 2){
     return res.status(403).send('User has already picked his server')
   }
+
+  // if(server.Users.length > 2){
+  //   return res.status(403).send('the server has maximum user join') // < - saya comment aja soalnya error
+  // }
+
   user.ServerId = req.body.ServerId
-  user.choose1 = req.body.chooose1
-  user.choose2 = req.body.chooose2
-  user.choose3 = req.body.chooose3
+  user.choose1 = req.body.choose1
+  user.choose2 = req.body.choose2
+  user.choose3 = req.body.choose3
   user.save()
   res.status(202).send('User has picked his server')
 }
 
+// api untuk cek room server di isi oleh player mana saja 
 exports.roombyId =  async (req, res) => {
   const data = await Server.findByPk(req.params.id, {
       include: User
   }) 
-  res.send(data)
+      res.send(data)
 }
+
+
+

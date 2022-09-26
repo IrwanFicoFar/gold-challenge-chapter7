@@ -28,7 +28,7 @@ getServerData()
 
 const handleRoomId = async () => {
     console.log('handle room id')
-    location.href = `/fight`
+    location.href = `/roombyId`
   
 }
 

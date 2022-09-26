@@ -12,7 +12,7 @@ exports.player = (req, res) => {
     res.render('player')
 }
 
-exports.fight = (req, res) => {
-    res.render('fight')
+exports.roombyId = (req, res) => {
+    res.render('roombyId')
 }
 

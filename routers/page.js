@@ -7,7 +7,7 @@ const costumMiddleware = require('../utils/costumMiddleware')
 router.get('/login', pageControllers.login)
 router.get('/admin', pageControllers.admin)
 router.get('/player', pageControllers.player)
-router.get('/fight', pageControllers.fight)
+router.get('/roombyId', pageControllers.roombyId)
 
 module.exports = router
 
